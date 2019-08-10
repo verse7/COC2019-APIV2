@@ -33,10 +33,10 @@ def register():
   form = RegistrationForm.from_json(request.json)
 
   if form.validate_on_submit():
-    firstname = escape(form.firstname.data)
-    lastname = escape(form.lastname.data)
-    email = escape(form.email.data)
-    password = escape(form.password.data)
+    firstname = form.firstname.data
+    lastname = form.lastname.data
+    email = form.email.data
+    password = form.password.data
     
     try:
       user = User(firstname, lastname, email, password)
@@ -68,8 +68,8 @@ def login():
   form = RegistrationForm.from_json(request.json)
 
   if form.validate_on_submit():
-    email = escape(form.email.data)
-    password = escape(form.password.data)
+    email = form.email.data
+    password =form.password.data
     
     # try to find a user with a matching email address
     user = User.query.filter_by(email=email).first()
@@ -128,8 +128,8 @@ def create_event():
 
         CDNManager().upload(image, filename)
 
-        event = Event(CDNManager().get_file_url(filename), escape(details['title']), escape(details['location']), 
-                        escape(details['manpower_quota']))
+        event = Event(CDNManager().get_file_url(filename), details['title'], details['location'], 
+                        details['manpower_quota'])
         db.session.add(event)
         db.session.commit()
         response = generate_api_response(21, 'success', 
@@ -273,10 +273,16 @@ def points():
 
 
 @app.after_request
-def add_header(response):
-    response.headers['X-UA-Compatible'] = 'IE=Edge,chrome=1'
-    response.headers['Cache-Control'] = 'public, max-age=0'
-    return response
+def add_cors_headers(response):
+  response.headers['Access-Control-Allow-Origin'] = '*'
+  if request.method == 'OPTIONS':
+      response.headers['Access-Control-Allow-Methods'] = 'DELETE, GET, POST, PUT'
+      response.headers['X-UA-Compatible'] = 'IE=Edge,chrome=1'
+      headers = request.headers.get('Access-Control-Request-Headers')
+      if headers:
+          response.headers['Access-Control-Allow-Headers'] = headers
+  return response
+  
 
 
 @app.errorhandler(404)
