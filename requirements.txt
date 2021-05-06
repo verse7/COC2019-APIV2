@@ -4,7 +4,7 @@ botocore==1.12.190
 click==6.7
 docutils==0.14
 Flask==1.0.2
-Flask-Cors==3.0.8
+Flask-Cors==3.0.9
 Flask-Migrate==2.4.0
 Flask-Script==2.0.6
 Flask-SocketIO==4.1.0
